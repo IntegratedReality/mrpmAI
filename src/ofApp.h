@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxOsc.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -20,5 +22,15 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+
+	private:
+		bool isSenderReady{false};
+		int senderRobInd{0};
+		bool up, down, left, right;
+		ofxOscSender* sndr;
+		int32_t getDrc();
+		float getRot();
+
+		void setupSender(int key);
+		void deleteSender();
 };
