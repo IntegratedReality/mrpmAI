@@ -4,7 +4,6 @@
 #include "Operation.h"
 #include "RobotData.h"
 #include "Position.h"
-#include "AIParams.h"
 
 enum ERoute {
 	DIRECT,
@@ -16,9 +15,14 @@ enum EStrategy {
 	SIMPLE,
 };
 
+
+static const double M_PI = 3.14159;
+
 class AI {
 public:
 	void init(int _myid);
+	void setFloatParams(double[]);
+	void setIntParams(int[]);
 	void setStrategy(EStrategy _estr);
 	void setRoute(ERoute _erou);
 
@@ -45,4 +49,17 @@ private:
 	EStrategy estr;
 	Position target;
 	Position POPos[NUM_OF_POINT_OBJ];
+
+	double LIMIT_TOP_TR = 0.2;
+	double LIMIT_TR_RIGHT = 1.0;
+	double LIMIT_TOP_TL = -0.2;
+	double LIMIT_TL_LEFT = -1.0;
+	double LIMIT_SHOT_ANGLE = 0.05;
+
+	int DIST_TO_TARGET = 300 + 125 + 100;
+	int DIFF_MOVE = 100;
+	double RATE_OF_TARGET = 1.0;
+	double RATE_OF_OBST = 0.2;
+	double RATE_OF_LENGTH_T = 300 * 300;
+	double RATE_OF_LENGTH_O = 100 * 100;
 };

@@ -1,8 +1,11 @@
 #pragma once
 
+#include <vector>
 #include "ofMain.h"
 #include "ofxOsc.h"
 #include "ofxGui.h"
+#include "AI.h"
+
 
 class ofApp : public ofBaseApp{
 
@@ -23,14 +26,33 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
+		ofxPanel gui;
+		
+		ofxToggle isAI[4];
+		ofxFloatSlider LIMIT_TOP_TR;
+		ofxFloatSlider LIMIT_TR_RIGHT;
+		ofxFloatSlider LIMIT_TOP_TL;
+		ofxFloatSlider LIMIT_TL_LEFT;
+		ofxFloatSlider LIMIT_SHOT_ANGLE;
+
+		//for dodge route
+		ofxIntSlider DIFF_MOVE;
+		ofxIntSlider DIST_TO_TARGET;
+		ofxFloatSlider RATE_OF_TARGET;
+		ofxFloatSlider RATE_OF_OBST;
+		ofxIntSlider RATE_OF_LENGTH_T;
+		ofxIntSlider RATE_OF_LENGTH_O;
+
 	private:
 		bool isSenderReady{false};
 		int senderRobInd{0};
 		bool up, down, left, right;
-		ofxOscSender* sndr;
+		std::vector<ofxOscSender> sndr;
 		int32_t getDrc();
 		float getRot();
 
-		void setupSender(int key);
+		void setupSender();
 		void deleteSender();
+
+		AI ai[4];
 };

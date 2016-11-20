@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <cmath>
 
-int SHOT_HINDO = 30000;
+const int SHOT_HINDO = 30000;
 
 void AI::init(int _myid) {
 	Myid = _myid;
@@ -16,6 +16,25 @@ void AI::init(int _myid) {
 	POPos[2].x = POINT_OBJ_2_X;
 	POPos[2].y = POINT_OBJ_2_Y;
 	target = POPos[0];
+}
+
+void AI::setFloatParams(double params[])
+{
+	LIMIT_TOP_TR = params[0];
+	LIMIT_TR_RIGHT = params[1];
+	LIMIT_TOP_TL = params[2];
+	LIMIT_TL_LEFT = params[3];
+	LIMIT_SHOT_ANGLE = params[4];
+	RATE_OF_TARGET = params[5];
+	RATE_OF_OBST = params[6];
+	RATE_OF_LENGTH_T = params[7];
+	RATE_OF_LENGTH_O = params[8];
+}
+
+void AI::setIntParams(int params[])
+{
+	DIST_TO_TARGET = params[0];
+	DIFF_MOVE = params[1];
 }
 
 void AI::update() {

@@ -76,6 +76,9 @@
     <ClCompile Include="src\AI.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Const.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -210,6 +213,27 @@
       <Filter>addons\ofxOsc\libs\oscpack\src\osc</Filter>
     </ClInclude>
     <ClInclude Include="src\AI.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Const.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EItem.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EState.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ETeam.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Operation.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Position.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RobotData.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
