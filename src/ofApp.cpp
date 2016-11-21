@@ -8,12 +8,15 @@ robot{
   "mrpmpi4.local"
 };
 const int PORT_ROBOT = 8000;
+const int PORT_AI = 8000;
 const std::string localhost = "127.0.0.1";
 
 //--------------------------------------------------------------
 void ofApp::setup() {
 	ofSetFrameRate(30);
 	up = down = right = left = false;
+
+	rcvr.setup(PORT_AI);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -42,6 +45,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+	receiveMessage();
+
 	double floatparams[9];
 	floatparams[0] = LIMIT_TOP_TR;
 	floatparams[1] = LIMIT_TR_RIGHT;
@@ -223,6 +228,22 @@ void ofApp::deleteSender() {
 		isSenderReady = false;
 	}
 }
+
+void ofApp::receiveMessage()
+{
+	while (rcvr.hasWaitingMessages()) {
+		ofxOscMessage m;
+		if (m.getAddress() == ("/main/toAI/allpos")) {
+			for (int i = 0; i < 4; i++) {
+				auto& d = ai[0].data[i];
+
+			}
+		}
+
+	}
+}
+
+void ofApp:assignPosData()
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y) {

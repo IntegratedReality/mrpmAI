@@ -47,6 +47,8 @@ class ofApp : public ofBaseApp{
 		bool isSenderReady{false};
 		int senderRobInd{0};
 		bool up, down, left, right;
+		ofxOscReceiver rcvr;
+		void receiveMessage();
 		std::vector<ofxOscSender> sndr;
 		int32_t getDrc();
 		float getRot();

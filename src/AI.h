@@ -37,10 +37,10 @@ public:
 	void developDodgeRoute();
 
 	void developSimpleStrategy();
+	RobotData data[NUM_OF_ROBOT];
 
 protected:
 	Operation operation;
-	RobotData data[NUM_OF_ROBOT];
 	ETeam owner[NUM_OF_POINT_OBJ];
 
 private:
