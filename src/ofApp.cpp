@@ -70,24 +70,31 @@ void ofApp::update() {
 	if (isSenderReady) {
 		ofxOscMessage m;
 		m.setAddress("/operator/operation");
-		m.addInt32Arg(getDrc());
-
-		for(int i = 0; i < 4; i++){
+		for (int i = 0; i < 4; i++) {
+			if (!isAI[i]) continue;
+			m.addInt32Arg(ai[i].getOperation().direction);
 			sndr[i].sendMessage(m);
 		}
 
-		ofxOscMessage x;
-		x.setAddress("/main/toRobot");
-		x.addInt32Arg(0);
-		x.addDoubleArg(0.f);
-		x.addDoubleArg(0.f);
-		x.addDoubleArg(0.f);
-		for (int i = 0; i < 9; ++i) {
-			x.addBoolArg(true);
-		}
+		m.setAddress("/operator/shot");
 		for (int i = 0; i < 4; i++) {
-			sndr[i].sendMessage(x);
+			if (!isAI[i]) continue;
+			m.addInt32Arg(ai[i].getOperation().shot);
+			sndr[i].sendMessage(m);
 		}
+
+		//ofxOscMessage x;
+		//x.setAddress("/main/toRobot");
+		//x.addInt32Arg(0);
+		//x.addDoubleArg(0.f);
+		//x.addDoubleArg(0.f);
+		//x.addDoubleArg(0.f);
+		//for (int i = 0; i < 9; ++i) {
+		//	x.addBoolArg(true);
+		//}
+		//for (int i = 0; i < 4; i++) {
+		//	sndr[i].sendMessage(x);
+		//}
 	}
 }
 
@@ -214,11 +221,12 @@ void ofApp::setupSender() {
 			sendtmp.setup(robot[i], PORT_ROBOT);
 		}
 		else {
-			sendtmp.setup(localhost, PORT_ROBOT);
+			sendtmp.setup(localhost, 8010);
 		}
 		sndr.push_back(sendtmp);
 	}
 	isSenderReady = true;
+	std::cout << "FInish setting up Sender" << std::endl;
 }
 
 void ofApp::deleteSender() {
@@ -234,16 +242,35 @@ void ofApp::receiveMessage()
 	while (rcvr.hasWaitingMessages()) {
 		ofxOscMessage m;
 		if (m.getAddress() == ("/main/toAI/allpos")) {
-			for (int i = 0; i < 4; i++) {
-				auto& d = ai[0].data[i];
+			for (int j = 0; j < 4; j++) {
+				auto tmpx = m.getArgAsDouble(3 * j);
+				auto tmpy = m.getArgAsDouble(3 * j + 1);
+				auto tmpth = m.getArgAsDouble(3 * j + 2);
 
+				for (int i = 0; i < 4; i++) {
+					auto& d = ai[i].data[j];
+					d.id = j;
+					d.pos.x = tmpx;
+					d.pos.y = tmpy;
+					d.pos.theta = tmpth;
+				}
 			}
 		}
+		else if (m.getAddress() == "/main/toAI/POowner") {
+			for (int j = 0; j < 3; j++) {
+				auto team = (ETeam)m.getArgAsInt(j);
 
+				for (int i = 0; i < 4; i++) {
+					ai[i].setPOOwner(j, team);
+				}
+			}
+		}
+		else if (m.getAddress() == "/main/toAI/gameState") {
+			gamestate = (EMode)m.getArgAsInt(0);
+		}
 	}
 }
 
-void ofApp:assignPosData()
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y) {

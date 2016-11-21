@@ -4,6 +4,7 @@
 #include "Operation.h"
 #include "RobotData.h"
 #include "Position.h"
+#include "EMode.h"
 
 enum ERoute {
 	DIRECT,

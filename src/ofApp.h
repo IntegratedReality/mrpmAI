@@ -57,4 +57,5 @@ class ofApp : public ofBaseApp{
 		void deleteSender();
 
 		AI ai[4];
+		EMode gamestate;
 };

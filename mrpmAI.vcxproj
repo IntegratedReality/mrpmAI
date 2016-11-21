@@ -200,6 +200,7 @@
     <ClInclude Include="src\AI.h" />
     <ClInclude Include="src\Const.h" />
     <ClInclude Include="src\EItem.h" />
+    <ClInclude Include="src\EMode.h" />
     <ClInclude Include="src\EState.h" />
     <ClInclude Include="src\ETeam.h" />
     <ClInclude Include="src\ofApp.h" />
