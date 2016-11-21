@@ -68,19 +68,21 @@ void ofApp::update() {
 	}
 
 	if (isSenderReady) {
-		ofxOscMessage m;
-		m.setAddress("/operator/operation");
 		for (int i = 0; i < 4; i++) {
+			ofxOscMessage m;
+			m.setAddress("/operator/operation");
 			if (!isAI[i]) continue;
-			m.addInt32Arg(ai[i].getOperation().direction);
+			//m.addInt32Arg(ai[i].getOperation().direction);
+			m.addInt32Arg(getDrc());
 			sndr[i].sendMessage(m);
 		}
 
-		m.setAddress("/operator/shot");
 		for (int i = 0; i < 4; i++) {
+			ofxOscMessage m2;
+			m2.setAddress("/operator/shot");
 			if (!isAI[i]) continue;
-			m.addInt32Arg(ai[i].getOperation().shot);
-			sndr[i].sendMessage(m);
+			m2.addInt32Arg(ai[i].getOperation().shot);
+			sndr[i].sendMessage(m2);
 		}
 
 		//ofxOscMessage x;
@@ -149,6 +151,7 @@ int32_t ofApp::getDrc() {
 	}
 	return 0;
 }
+
 float ofApp::getRot() {
 	if (up) {
 		if (right)return 45;
