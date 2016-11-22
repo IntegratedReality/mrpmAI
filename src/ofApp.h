@@ -29,6 +29,12 @@ class ofApp : public ofBaseApp{
 		ofxPanel gui;
 		
 		ofxToggle isAI[4];
+		ofxToggle connect[4];
+		ofxToggle isDodge[4]; //false = direct
+
+		ofxVec2Slider DUTY[4];
+
+		//for str
 		ofxFloatSlider LIMIT_TOP_TR;
 		ofxFloatSlider LIMIT_TR_RIGHT;
 		ofxFloatSlider LIMIT_TOP_TL;

@@ -24,10 +24,24 @@ void ofApp::setup() {
 	}
 
 	gui.setup();
+	gui.add(connect[0].setup("connect Pi1?", false));
+	gui.add(connect[1].setup("connect Pi2?", false));
+	gui.add(connect[2].setup("connect Pi3?", false));
+	gui.add(connect[3].setup("connect Pi4?", false));
 	gui.add(isAI[0].setup("Pi1 is AI?", false));
 	gui.add(isAI[1].setup("Pi2 is AI?", false));
-	gui.add(isAI[2].setup("Pi3 is AI?", false));
-	gui.add(isAI[3].setup("Pi4 is AI?", false));
+	gui.add(isAI[2].setup("Pi3 is AI?", true));
+	gui.add(isAI[3].setup("Pi4 is AI?", true));
+	gui.add(isDodge[0].setup("Pi1 choose Dodge route?", false));
+	gui.add(isDodge[1].setup("Pi2 choose Dodge route?", false));
+	gui.add(isDodge[2].setup("Pi3 choose Dodge route?", true));
+	gui.add(isDodge[3].setup("Pi4 choose Dodge route?", true));
+	
+	gui.add(DUTY[0].setup("Pi1 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+	gui.add(DUTY[1].setup("Pi2 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+	gui.add(DUTY[2].setup("Pi3 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+	gui.add(DUTY[3].setup("Pi4 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+
 	gui.add(LIMIT_TOP_TR.setup("LIMIT TOP TR", 0.2, 0.01, 1.0));
 	gui.add(LIMIT_TR_RIGHT.setup("LIMIT TR RIGHT", 1.0, 0.01, 1.0));
 	gui.add(LIMIT_TOP_TL.setup("LIMIT TOP TL", -0.2, -1.0, -0.01));
@@ -65,23 +79,37 @@ void ofApp::update() {
 	for (int i = 0; i < 4; i++) {
 		ai[i].setFloatParams(floatparams);
 		ai[i].setIntParams(intparams);
+		ai[i].update();
 	}
 
 	if (isSenderReady) {
 		for (int i = 0; i < 4; i++) {
 			ofxOscMessage m;
 			m.setAddress("/operator/operation");
-			if (!isAI[i]) continue;
-			//m.addInt32Arg(ai[i].getOperation().direction);
-			m.addInt32Arg(getDrc());
+			if (isAI[i]) {
+				m.addInt32Arg(ai[i].getOperation().direction);
+			}
+			else {
+				m.addInt32Arg(getDrc());
+			}
 			sndr[i].sendMessage(m);
 		}
 
 		for (int i = 0; i < 4; i++) {
+			if (!connect[i]) continue;
 			ofxOscMessage m2;
 			m2.setAddress("/operator/shot");
-			if (!isAI[i]) continue;
 			m2.addInt32Arg(ai[i].getOperation().shot);
+			sndr[i].sendMessage(m2);
+		}
+
+		for (int i = 0; i < 4; i++) {
+			if (!connect[i]) continue;
+			ofxOscMessage m2;
+			m2.setAddress("/operator/duty");
+			ofVec2f duties = DUTY[i];
+			m2.addDoubleArg(duties.x);
+			m2.addDoubleArg(duties.y);
 			sndr[i].sendMessage(m2);
 		}
 
@@ -220,7 +248,7 @@ void ofApp::setupSender() {
 	std::cout << "set up Sender" << std::endl;
 	for (int i = 0; i < 4; i++) {
 		ofxOscSender sendtmp;
-		if (isAI[i]) {
+		if (connect[i]) {
 			sendtmp.setup(robot[i], PORT_ROBOT);
 		}
 		else {
