@@ -16,8 +16,9 @@ enum EStrategy {
 	SIMPLE,
 };
 
-
+#ifndef M_PI
 static const double M_PI = 3.14159;
+#endif
 
 class AI {
 public:
@@ -27,7 +28,6 @@ public:
 	void setStrategy(EStrategy _estr);
 	void setRoute(ERoute _erou);
 
-	// Šî’êƒNƒ‰ƒX‚Å’Šo‚·‚é‚©‚à
 	void update();
 	void setRobotData(int _id, RobotData _data);
 	void setPOOwner(int _id, ETeam _owner);

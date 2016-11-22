@@ -79,6 +79,7 @@ void ofApp::update() {
 	for (int i = 0; i < 4; i++) {
 		ai[i].setFloatParams(floatparams);
 		ai[i].setIntParams(intparams);
+        ai[i].setRoute(isDodge[i] ? DODGE : DIRECT);
 		ai[i].update();
 	}
 
@@ -96,10 +97,11 @@ void ofApp::update() {
 		}
 
 		for (int i = 0; i < 4; i++) {
-			if (!connect[i]) continue;
+			if (!isAI[i]) continue;
 			ofxOscMessage m2;
 			m2.setAddress("/operator/shot");
-			m2.addInt32Arg(ai[i].getOperation().shot);
+            m2.addInt32Arg(i);
+			m2.addBoolArg(ai[i].getOperation().shot);
 			sndr[i].sendMessage(m2);
 		}
 
