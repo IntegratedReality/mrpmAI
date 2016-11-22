@@ -64,7 +64,7 @@ void ofApp::setup() {
     gr_targets.setup();
     gr_targets.setName("Target Coords");
     for(int i=0; i<4; i++){
-        std::string t="Target for Pi"+ofToString(i);
+        std::string t="Target for Pi"+ofToString(i+1);
         gr_targets.add(targetSlider[i].setup
                        (t,
                         ofVec2f(ofRandom(WIDTH_OF_FIELD),ofRandom(HEIGHT_OF_FIELD)),
@@ -72,7 +72,7 @@ void ofApp::setup() {
                         ofVec2f(WIDTH_OF_FIELD,HEIGHT_OF_FIELD)
                         ));
     
-        std::string s="Pi"+ofToString(i)+" auto drive";
+        std::string s="Pi"+ofToString(i+1)+" auto drive";
         gr_targets.add(autoDrive[i].setup(s,false));
     }
     gui.add(&gr_targets);
@@ -107,11 +107,13 @@ void ofApp::update() {
         ai[i].setRoute(isDodge[i] ? DODGE : DIRECT);
         
         if(autoDrive[i]){
-            ai[i].update();}
-        else{
+            ai[i].setAutoRouting(true);
+        }else{
+            ai[i].setAutoRouting(false);
             ofVec2f f=targetSlider[i];
             ai[i].setTargetManually(f.x, f.y);
         }
+        ai[i].update();
 	}
 
 	if (isSenderReady) {
@@ -165,15 +167,15 @@ void ofApp::update() {
 void ofApp::draw() {
 	static int width = ofGetWidth(), height = ofGetHeight();
 
-	std::string str;
-	if (isSenderReady) {
-		ofSetColor(ofColor::black);
-		str = robot[senderRobInd] + ":" + ofToString(PORT_ROBOT);
-	}
-	else {
-		str = "Press 1-4.";
-	}
-	ofDrawBitmapString(str, 0, 30);
+//	std::string str;
+//	if (isSenderReady) {
+//		ofSetColor(ofColor::black);
+//		str = robot[senderRobInd] + ":" + ofToString(PORT_ROBOT);
+//	}
+//	else {
+//		str = "Press 1-4.";
+//	}
+//	ofDrawBitmapString(str, 0, 30);
 
 	ofPushMatrix();
 	ofTranslate(width / 2, height / 2);
@@ -304,7 +306,7 @@ void ofApp::deleteSender() {
 
 void ofApp::receiveMessage()
 {
-	while (rcvr.hasWaitingMessages()) {
+//	while (rcvr.hasWaitingMessages()) {
 		ofxOscMessage m;
 		if (m.getAddress() == ("/main/toAI/allpos")) {
 			for (int j = 0; j < 4; j++) {
@@ -333,7 +335,7 @@ void ofApp::receiveMessage()
 		else if (m.getAddress() == "/main/toAI/gameState") {
 			gamestate = (EMode)m.getArgAsInt(0);
 		}
-	}
+//	}
 }
 
 

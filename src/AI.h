@@ -34,6 +34,8 @@ public:
 	void setRobotData(int _id, RobotData _data);
 	void setPOOwner(int _id, ETeam _owner);
 	Operation getOperation();
+    
+    void setAutoRouting(bool _val);
 
 	void developRandomRoute();
 	void developDirectRoute();
@@ -50,6 +52,7 @@ protected:
 private:
 	int Myid;
 	ERoute erou;
+    bool autoRouting{false};
 	EStrategy estr;
 	Position target;
 	Position POPos[NUM_OF_POINT_OBJ];

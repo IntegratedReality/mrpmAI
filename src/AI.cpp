@@ -43,7 +43,9 @@ void AI::setTargetManually(float x, float y){
 }
 
 void AI::update() {
-	if (estr == SIMPLE) developSimpleStrategy();
+    if(autoRouting){
+        if (estr == SIMPLE) developSimpleStrategy();
+    }
 	//target = POPos[0];
 	//	std::cout << "x:" << target.x << " y:" << target.y << std::endl;
 
@@ -70,6 +72,11 @@ void AI::setPOOwner(int _id, ETeam _owner) {
 
 Operation AI::getOperation() {
 	return operation;
+}
+
+
+void AI::setAutoRouting(bool _val){
+    autoRouting = _val;
 }
 
 void AI::developRandomRoute() {
