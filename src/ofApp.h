@@ -32,8 +32,12 @@ class ofApp : public ofBaseApp{
 		ofxToggle connect[4];
 		ofxToggle isDodge[4]; //false = direct
 
+    ofxGuiGroup gr_duty;
+    
 		ofxVec2Slider DUTY[4];
-
+    
+    
+    ofxGuiGroup gr_dodgeConsts;
 		//for str
 		ofxFloatSlider LIMIT_TOP_TR;
 		ofxFloatSlider LIMIT_TR_RIGHT;
@@ -48,7 +52,12 @@ class ofApp : public ofBaseApp{
 		ofxFloatSlider RATE_OF_OBST;
 		ofxIntSlider RATE_OF_LENGTH_T;
 		ofxIntSlider RATE_OF_LENGTH_O;
-
+    
+    ofxGuiGroup gr_targets;
+    
+    ofxToggle autoDrive[4];
+    ofxVec2Slider targetSlider[4];
+    
 	private:
 		bool isSenderReady{false};
 		int senderRobInd{0};

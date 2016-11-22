@@ -37,6 +37,11 @@ void AI::setIntParams(int params[])
 	DIFF_MOVE = params[1];
 }
 
+void AI::setTargetManually(float x, float y){
+    target.x=x;
+    target.y=y;
+}
+
 void AI::update() {
 	if (estr == SIMPLE) developSimpleStrategy();
 	//target = POPos[0];
@@ -241,6 +246,5 @@ void AI::developSimpleStrategy() {
 	//this->operation.shot = myshot * !(rand() % SHOT_HINDO);
 	this->operation.shot = true;
 }
-
 
 

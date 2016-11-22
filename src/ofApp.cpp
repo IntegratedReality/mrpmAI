@@ -8,7 +8,7 @@ robot{
   "mrpmpi4.local"
 };
 const int PORT_ROBOT = 8000;
-const int PORT_AI = 8000;
+const int PORT_OPERATOR = 8001;
 const std::string localhost = "127.0.0.1";
 
 //--------------------------------------------------------------
@@ -16,7 +16,7 @@ void ofApp::setup() {
 	ofSetFrameRate(30);
 	up = down = right = left = false;
 
-	rcvr.setup(PORT_AI);
+	rcvr.setup(PORT_OPERATOR);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -37,22 +37,47 @@ void ofApp::setup() {
 	gui.add(isDodge[2].setup("Pi3 choose Dodge route?", true));
 	gui.add(isDodge[3].setup("Pi4 choose Dodge route?", true));
 	
-	gui.add(DUTY[0].setup("Pi1 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
-	gui.add(DUTY[1].setup("Pi2 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
-	gui.add(DUTY[2].setup("Pi3 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
-	gui.add(DUTY[3].setup("Pi4 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+    
+    gr_duty.setup();
+    gr_duty.setName("Duty Coeffs");
+	gr_duty.add(DUTY[0].setup("Pi1 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+	gr_duty.add(DUTY[1].setup("Pi2 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+	gr_duty.add(DUTY[2].setup("Pi3 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+	gr_duty.add(DUTY[3].setup("Pi4 duty coefficient", ofVec2f(1.0, 1.0), ofVec2f(0.1, 0.1), ofVec2f(3.0, 3.0)));
+    gui.add(&gr_duty);
 
-	gui.add(LIMIT_TOP_TR.setup("LIMIT TOP TR", 0.2, 0.01, 1.0));
-	gui.add(LIMIT_TR_RIGHT.setup("LIMIT TR RIGHT", 1.0, 0.01, 1.0));
-	gui.add(LIMIT_TOP_TL.setup("LIMIT TOP TL", -0.2, -1.0, -0.01));
-	gui.add(LIMIT_TL_LEFT.setup("LIMIT TL LEFT", -1.0, -1.0, -0.01));
-	gui.add(LIMIT_SHOT_ANGLE.setup("LIMIT SHOT ANGLE", 0.05, 0.01, 0.2));
-	gui.add(DIFF_MOVE.setup("DIFF_MOVE", 100, 10, 300));
-	gui.add(DIST_TO_TARGET.setup("DIST_TO_TARGET", 525, 225, 725));
-	gui.add(RATE_OF_TARGET.setup("RATE_OF_TARGET", 1.0, 0.1, 2.0));
-	gui.add(RATE_OF_OBST.setup("RATE_OF_OBST", 0.2, 0.1, 1.0));
-	gui.add(RATE_OF_LENGTH_T.setup("RATE_OF_LENGTH_T", 300, 100, 600));
-	gui.add(RATE_OF_LENGTH_O.setup("RATE_OF_LENGTH_O", 100, 10, 300));
+    gr_dodgeConsts.setup();
+    gr_dodgeConsts.setName("CONSTs");
+    gr_dodgeConsts.add(LIMIT_TOP_TR.setup("LIMIT TOP TR", 0.2, 0.01, 1.0));
+	gr_dodgeConsts.add(LIMIT_TR_RIGHT.setup("LIMIT TR RIGHT", 1.0, 0.01, 1.0));
+	gr_dodgeConsts.add(LIMIT_TOP_TL.setup("LIMIT TOP TL", -0.2, -1.0, -0.01));
+	gr_dodgeConsts.add(LIMIT_TL_LEFT.setup("LIMIT TL LEFT", -1.0, -1.0, -0.01));
+	gr_dodgeConsts.add(LIMIT_SHOT_ANGLE.setup("LIMIT SHOT ANGLE", 0.05, 0.01, 0.2));
+	gr_dodgeConsts.add(DIFF_MOVE.setup("DIFF_MOVE", 100, 10, 300));
+	gr_dodgeConsts.add(DIST_TO_TARGET.setup("DIST_TO_TARGET", 525, 225, 725));
+	gr_dodgeConsts.add(RATE_OF_TARGET.setup("RATE_OF_TARGET", 1.0, 0.1, 2.0));
+	gr_dodgeConsts.add(RATE_OF_OBST.setup("RATE_OF_OBST", 0.2, 0.1, 1.0));
+	gr_dodgeConsts.add(RATE_OF_LENGTH_T.setup("RATE_OF_LENGTH_T", 300, 100, 600));
+	gr_dodgeConsts.add(RATE_OF_LENGTH_O.setup("RATE_OF_LENGTH_O", 100, 10, 300));
+    gui.add(&gr_dodgeConsts);
+    
+    gr_targets.setup();
+    gr_targets.setName("Target Coords");
+    for(int i=0; i<4; i++){
+        std::string t="Target for Pi"+ofToString(i);
+        gr_targets.add(targetSlider[i].setup
+                       (t,
+                        ofVec2f(ofRandom(WIDTH_OF_FIELD),ofRandom(HEIGHT_OF_FIELD)),
+                        ofVec2f(0,0),
+                        ofVec2f(WIDTH_OF_FIELD,HEIGHT_OF_FIELD)
+                        ));
+    
+        std::string s="Pi"+ofToString(i)+" auto drive";
+        gr_targets.add(autoDrive[i].setup(s,false));
+    }
+    gui.add(&gr_targets);
+    
+    gui.minimizeAll();
 }
 
 
@@ -80,7 +105,13 @@ void ofApp::update() {
 		ai[i].setFloatParams(floatparams);
 		ai[i].setIntParams(intparams);
         ai[i].setRoute(isDodge[i] ? DODGE : DIRECT);
-		ai[i].update();
+        
+        if(autoDrive[i]){
+            ai[i].update();}
+        else{
+            ofVec2f f=targetSlider[i];
+            ai[i].setTargetManually(f.x, f.y);
+        }
 	}
 
 	if (isSenderReady) {
@@ -146,19 +177,20 @@ void ofApp::draw() {
 
 	ofPushMatrix();
 	ofTranslate(width / 2, height / 2);
-	ofSetColor(ofColor::red);
-	if (!(up || down || left || right)) {
-		ofDrawCircle(0, 0, 30);
-	}
-	else {
-		ofRotate(getRot());
-		ofSetLineWidth(10);
-		ofDrawLine(0, 0, 0, -100);
-		ofDrawCircle(0, -110, 20);
-	}
-	ofPopMatrix();
+    ofSetColor(ofColor::red);
+    if (!(up || down || left || right)) {
+        ofDrawCircle(0, 0, 30);
+    } else {
+        ofRotate(getRot());
+        ofSetLineWidth(10);
+        ofDrawLine(0, 0, 0, -100);
+        ofDrawCircle(0, -110, 20);
+    }
+    ofPopMatrix();
 
 	gui.draw();
+    
+    
 }
 
 

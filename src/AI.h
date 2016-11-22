@@ -26,7 +26,9 @@ public:
 	void setFloatParams(double[]);
 	void setIntParams(int[]);
 	void setStrategy(EStrategy _estr);
-	void setRoute(ERoute _erou);
+    void setRoute(ERoute _erou);
+    
+    void setTargetManually(float x, float y);
 
 	void update();
 	void setRobotData(int _id, RobotData _data);
@@ -39,6 +41,7 @@ public:
 
 	void developSimpleStrategy();
 	RobotData data[NUM_OF_ROBOT];
+    
 
 protected:
 	Operation operation;
