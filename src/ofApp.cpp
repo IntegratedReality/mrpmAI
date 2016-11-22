@@ -306,36 +306,37 @@ void ofApp::deleteSender() {
 
 void ofApp::receiveMessage()
 {
-//	while (rcvr.hasWaitingMessages()) {
-		ofxOscMessage m;
-		if (m.getAddress() == ("/main/toAI/allpos")) {
-			for (int j = 0; j < 4; j++) {
-				auto tmpx = m.getArgAsDouble(3 * j);
-				auto tmpy = m.getArgAsDouble(3 * j + 1);
-				auto tmpth = m.getArgAsDouble(3 * j + 2);
-
-				for (int i = 0; i < 4; i++) {
-					auto& d = ai[i].data[j];
-					d.id = j;
-					d.pos.x = tmpx;
-					d.pos.y = tmpy;
-					d.pos.theta = tmpth;
-				}
-			}
-		}
-		else if (m.getAddress() == "/main/toAI/POowner") {
-			for (int j = 0; j < 3; j++) {
-				auto team = (ETeam)m.getArgAsInt(j);
-
-				for (int i = 0; i < 4; i++) {
-					ai[i].setPOOwner(j, team);
-				}
-			}
-		}
-		else if (m.getAddress() == "/main/toAI/gameState") {
-			gamestate = (EMode)m.getArgAsInt(0);
-		}
-//	}
+    while (rcvr.hasWaitingMessages()) {
+        ofxOscMessage m;
+        rcvr.getNextMessage(m);
+        if (m.getAddress() == "/main/toAI/allpos") {
+            for (int j = 0; j < 4; j++) {
+                auto tmpx = m.getArgAsDouble(3 * j);
+                auto tmpy = m.getArgAsDouble(3 * j + 1);
+                auto tmpth = m.getArgAsDouble(3 * j + 2);
+                
+                for (int i = 0; i < 4; i++) {
+                    auto& d = ai[i].data[j];
+                    d.id = j;
+                    d.pos.x = tmpx;
+                    d.pos.y = tmpy;
+                    d.pos.theta = tmpth;
+                }
+            }
+        }
+        else if (m.getAddress() == "/main/toAI/POowner") {
+            for (int j = 0; j < 3; j++) {
+                auto team = (ETeam)m.getArgAsInt(j);
+                
+                for (int i = 0; i < 4; i++) {
+                    ai[i].setPOOwner(j, team);
+                }
+            }
+        }
+        else if (m.getAddress() == "/main/toAI/gameState") {
+            gamestate = (EMode)m.getArgAsInt(0);
+        }
+    }
 }
 
 

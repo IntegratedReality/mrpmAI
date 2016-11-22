@@ -52,6 +52,15 @@ void AI::update() {
 	if (erou == DIRECT) developDirectRoute();
 	else if (erou == DODGE) developDodgeRoute();
 	else developRandomRoute();
+    
+    
+    //for debug
+    if(Myid == 1){
+        std::cout<<"pi2 pos x:"<<data[1].pos.x
+        <<", y:"<<data[1].pos.y
+        <<", th:"<<data[1].pos.theta
+        <<", Op-drc:"<<getOperation().direction<<std::endl;
+    }
 }
 
 void AI::setStrategy(EStrategy _estr) {
